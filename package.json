@@ -9,6 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "echo \"No tests specified\" && exit 0",
     "electron": "electron electron/main.js",
     "electron-dev": "concurrently \"pnpm run dev\" \"wait-on http://localhost:3000 && electron electron/main.js\"",
     "build-electron": "pnpm run build && electron-builder",
