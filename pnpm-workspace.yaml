@@ -1,4 +1,0 @@
-onlyBuiltDependencies:
-  - electron
-  - sqlite3
-  - unrs-resolver

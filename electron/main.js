@@ -6,11 +6,17 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: isDev ? 1400 : 1920,
-    height: isDev ? 900 : 1080,
-    fullscreen: !isDev,
-    kiosk: !isDev, // Enable kiosk mode only in production
-    autoHideMenuBar: true,
+    width: 1400,
+    height: 900,
+    minWidth: 800,
+    minHeight: 600,
+    fullscreen: false,
+    kiosk: false,
+    autoHideMenuBar: false,
+    resizable: true,
+    maximizable: true,
+    minimizable: true,
+    titleBarStyle: 'default',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

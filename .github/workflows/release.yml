@@ -1,0 +1,201 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - maadasdfin
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+      upload_url: ${{ steps.release.outputs.upload_url }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Generate tag
+        id: tag
+        run: |
+          # Get the current date and time for versioning
+          VERSION=$(date +'%Y.%m.%d-%H%M%S')
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+          
+      - name: Create Release
+        id: release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          release_name: Visitor Kiosk ${{ steps.tag.outputs.tag }}
+          draft: false
+          prerelease: false
+
+  build-windows:
+    needs: create-release
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+          
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          
+      - name: Install dependencies
+        run: pnpm install
+        
+      - name: Build application
+        run: pnpm run build
+        
+      - name: Install GitHub CLI
+        run: |
+          # Install GitHub CLI on Windows
+          winget install --id GitHub.cli
+          
+      - name: Package for Windows
+        run: pnpm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Find and upload Windows artifacts
+        shell: bash
+        run: |
+          # Find the Windows installer file
+          WINDOWS_FILE=$(find ./dist -name "*.exe" | head -1)
+          if [ -f "$WINDOWS_FILE" ]; then
+            echo "Found Windows installer: $WINDOWS_FILE"
+            gh release upload ${{ needs.create-release.outputs.tag }} "$WINDOWS_FILE" --clobber
+          else
+            echo "No Windows installer found"
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux:
+    needs: create-release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3 python3-dev libsqlite3-dev
+          
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          
+      - name: Install dependencies
+        run: pnpm install
+        
+      - name: Build application
+        run: pnpm run build
+        
+      - name: Install GitHub CLI
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+          
+      - name: Package for Linux
+        run: pnpm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Find and upload Linux artifacts
+        shell: bash
+        run: |
+          # Find Linux artifacts
+          APPIMAGE_FILE=$(find ./dist -name "*.AppImage" | head -1)
+          DEB_FILE=$(find ./dist -name "*.deb" | head -1)
+          
+          if [ -f "$APPIMAGE_FILE" ]; then
+            echo "Found AppImage: $APPIMAGE_FILE"
+            gh release upload ${{ needs.create-release.outputs.tag }} "$APPIMAGE_FILE" --clobber
+          fi
+          
+          if [ -f "$DEB_FILE" ]; then
+            echo "Found DEB package: $DEB_FILE"
+            gh release upload ${{ needs.create-release.outputs.tag }} "$DEB_FILE" --clobber
+          fi
+          
+          if [ ! -f "$APPIMAGE_FILE" ] && [ ! -f "$DEB_FILE" ]; then
+            echo "No Linux artifacts found"
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-macos:
+    needs: create-release
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+          
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          
+      - name: Install dependencies
+        run: pnpm install
+        
+      - name: Build application
+        run: pnpm run build
+        
+      - name: Install GitHub CLI
+        run: |
+          brew install gh
+          
+      - name: Package for macOS
+        run: pnpm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Find and upload macOS artifacts
+        shell: bash
+        run: |
+          # Find the macOS DMG file
+          DMG_FILE=$(find ./dist -name "*.dmg" | head -1)
+          if [ -f "$DMG_FILE" ]; then
+            echo "Found macOS installer: $DMG_FILE"
+            gh release upload ${{ needs.create-release.outputs.tag }} "$DMG_FILE" --clobber
+          else
+            echo "No macOS installer found"
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
