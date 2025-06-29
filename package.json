@@ -7,16 +7,16 @@
   "homepage": "./",
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm rebuild:sqlite3 && next build",
+    "build": "npm run rebuild:sqlite3 && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "echo \"No tests specified\" && exit 0",
     "postinstall": "electron-builder install-app-deps",
     "rebuild:sqlite3": "npx electron-rebuild -f -w sqlite3",
     "electron": "electron electron/main.js",
-    "electron-dev": "concurrently \"pnpm run dev\" \"wait-on http://localhost:3000 && electron electron/main.js\"",
-    "build-electron": "pnpm rebuild:sqlite3 && pnpm run build && electron-builder",
-    "dist": "pnpm rebuild:sqlite3 && pnpm run build && electron-builder --publish=never"
+    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron electron/main.js\"",
+    "build-electron": "npm rebuild:sqlite3 && npm run build && electron-builder",
+    "dist": "npm rebuild:sqlite3 && npm run build && electron-builder --publish=never"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
