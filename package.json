@@ -5,18 +5,19 @@
   "description": "Visitor Kiosk desktop application for managing visitor check-ins and appointments",
   "main": "electron/main.js",
   "homepage": "./",
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
     "dev": "next dev",
-    "build": "npm run rebuild:sqlite3 && next build",
+    "build": "pnpm run rebuild:sqlite3 && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "echo \"No tests specified\" && exit 0",
     "postinstall": "electron-builder install-app-deps",
-    "rebuild:sqlite3": "npx electron-rebuild -f -w sqlite3",
+    "rebuild:sqlite3": "pnpx electron-rebuild -f -w sqlite3",
     "electron": "electron electron/main.js",
-    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron electron/main.js\"",
-    "build-electron": "npm rebuild:sqlite3 && npm run build && electron-builder",
-    "dist": "npm rebuild:sqlite3 && npm run build && electron-builder --publish=never"
+    "electron-dev": "concurrently \"pnpm run dev\" \"wait-on http://localhost:3000 && electron electron/main.js\"",
+    "build-electron": "pnpm run rebuild:sqlite3 && pnpm run build && electron-builder",
+    "dist": "pnpm run rebuild:sqlite3 && pnpm run build && electron-builder --publish=never"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.5",
