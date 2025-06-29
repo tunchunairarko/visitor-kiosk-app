@@ -22,9 +22,10 @@ jobs:
           sudo apt-get install -y build-essential python3 python3-dev libsqlite3-dev
         
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 10
+          run_install: false
           
       - name: Set up Node.js
         uses: actions/setup-node@v4
