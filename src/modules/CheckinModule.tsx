@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Select } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, User, Mail, Phone, Building2, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
@@ -53,7 +54,7 @@ export const CheckinModule = () => {
     employee.department.toLowerCase().includes(searchEmployee.toLowerCase())
   )
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -73,7 +74,7 @@ export const CheckinModule = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.visitorName || !formData.visitingEmployee) {
+    if (!formData.visitorName || !formData.visitingEmployee || !formData.purpose) {
       alert('Please fill in all required fields')
       return
     }
@@ -126,6 +127,10 @@ export const CheckinModule = () => {
               </p>
             </div>
             <div className="space-y-2">
+              <div className="text-sm text-gray-600 space-y-1">
+                <p><strong>Purpose:</strong> {formData.purpose}</p>
+                <p><strong>Visiting:</strong> {formData.visitingEmployeeName}</p>
+              </div>
               <p className="text-sm text-gray-600">
                 An email notification has been sent to your host.
               </p>
@@ -290,22 +295,40 @@ export const CheckinModule = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <MessageSquare className="inline mr-2 h-4 w-4" />
-                  Purpose of Visit
+                  Purpose of Visit *
                 </label>
-                <textarea
+                <Select
                   name="purpose"
                   value={formData.purpose}
                   onChange={handleInputChange}
-                  rows={3}
-                  placeholder="Brief description of your visit"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base resize-none"
-                />
+                  placeholder="Select the purpose of your visit"
+                  required
+                  className="text-base sm:text-lg py-2 sm:py-3 w-full"
+                >
+                  <option value="Meeting">Meeting</option>
+                  <option value="Interview">Interview</option>
+                  <option value="Delivery">Delivery</option>
+                  <option value="Consultation">Consultation</option>
+                  <option value="Training">Training</option>
+                  <option value="Maintenance">Maintenance</option>
+                  <option value="Sales Presentation">Sales Presentation</option>
+                  <option value="Client Visit">Client Visit</option>
+                  <option value="Inspection">Inspection</option>
+                  <option value="Conference">Conference</option>
+                  <option value="Workshop">Workshop</option>
+                  <option value="Pickup">Pickup</option>
+                  <option value="Support">Support</option>
+                  <option value="Documentation">Documentation</option>
+                  <option value="Contractor Work">Contractor Work</option>
+                  <option value="Vendor Meeting">Vendor Meeting</option>
+                  <option value="Other">Other</option>
+                </Select>
               </div>
 
               {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={isSubmitting || employees.length === 0 || !formData.visitingEmployee}
+                disabled={isSubmitting || employees.length === 0 || !formData.visitingEmployee || !formData.purpose}
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 sm:py-4 text-base sm:text-lg disabled:bg-gray-400"
               >
                 {isSubmitting ? 'Processing...' : 'Complete Check-In'}

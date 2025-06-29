@@ -7,6 +7,8 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
+  // Specify the src directory for Next.js
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
   // Enable experimental features for better compatibility with Electron
   experimental: {
     esmExternals: false
