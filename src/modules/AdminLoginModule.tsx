@@ -54,6 +54,7 @@ export const AdminLoginModule = () => {
         setError(data.error || 'Invalid credentials')
       }
     } catch (error) {
+      console.error('Login error:', error)
       setError('Login failed. Please try again.')
     } finally {
       setIsLoading(false)

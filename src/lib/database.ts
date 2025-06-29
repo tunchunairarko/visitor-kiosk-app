@@ -1,8 +1,9 @@
 import sqlite3 from 'sqlite3';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { format, startOfDay, endOfDay } from 'date-fns';
-import { Visitor, CreateVisitorRequest, Admin, VisitorStats, DatabaseResult } from './types';
+import { format } from 'date-fns';
+import bcrypt from 'bcryptjs';
+import { Visitor, CreateVisitorRequest, Admin, VisitorStats } from './types';
 
 const dbPath = path.join(process.cwd(), 'data', 'visitor-kiosk.db');
 
@@ -14,7 +15,7 @@ class Database {
     this.init();
   }
 
-  private run(sql: string, params: any[] = []): Promise<sqlite3.RunResult> {
+  private run(sql: string, params: (string | number | boolean | null | undefined)[] = []): Promise<sqlite3.RunResult> {
     return new Promise((resolve, reject) => {
       this.db.run(sql, params, function(err) {
         if (err) reject(err);
@@ -23,7 +24,7 @@ class Database {
     });
   }
 
-  private get<T = any>(sql: string, params: any[] = []): Promise<T | undefined> {
+  private get<T = Record<string, unknown>>(sql: string, params: (string | number | boolean | null | undefined)[] = []): Promise<T | undefined> {
     return new Promise((resolve, reject) => {
       this.db.get(sql, params, (err, row) => {
         if (err) reject(err);
@@ -32,7 +33,7 @@ class Database {
     });
   }
 
-  private all<T = any>(sql: string, params: any[] = []): Promise<T[]> {
+  private all<T = Record<string, unknown>>(sql: string, params: (string | number | boolean | null | undefined)[] = []): Promise<T[]> {
     return new Promise((resolve, reject) => {
       this.db.all(sql, params, (err, rows) => {
         if (err) reject(err);
@@ -86,7 +87,6 @@ class Database {
     // Check if admin exists
     const adminCount = await this.get<{ count: number }>('SELECT COUNT(*) as count FROM admins');
     if (!adminCount || adminCount.count === 0) {
-      const bcrypt = require('bcryptjs');
       const hashedPassword = await bcrypt.hash('admin123', 10);
       
       await this.run(
@@ -99,7 +99,7 @@ class Database {
   async generateTicketNumber(): Promise<string> {
     const today = format(new Date(), 'yyyy-MM-dd');
 
-    let counter = await this.get<{ counter: number }>('SELECT counter FROM daily_counters WHERE date = ?', [today]);
+    const counter = await this.get<{ counter: number }>('SELECT counter FROM daily_counters WHERE date = ?', [today]);
     
     if (!counter) {
       await this.run('INSERT INTO daily_counters (date, counter) VALUES (?, 1)', [today]);
@@ -176,7 +176,6 @@ class Database {
   }
 
   async authenticateAdmin(username: string, password: string): Promise<Admin | null> {
-    const bcrypt = require('bcryptjs');
     
     const admin = await this.get<Admin & { password_hash: string }>('SELECT * FROM admins WHERE username = ?', [username]);
     if (!admin) return null;

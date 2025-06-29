@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
@@ -36,23 +36,14 @@ export const AdminDashboardModule = () => {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-  useEffect(() => {
-    checkAuth()
-    fetchDashboardData()
-    
-    // Refresh data every 30 seconds
-    const interval = setInterval(fetchDashboardData, 30000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const checkAuth = () => {
+  const checkAuth = useCallback(() => {
     const token = localStorage.getItem('adminToken')
     if (!token) {
       router.push('/admin')
     }
-  }
+  }, [router])
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       setError(null)
       const [statsResponse, visitorsResponse] = await Promise.all([
@@ -79,7 +70,22 @@ export const AdminDashboardModule = () => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    const checkAuthAndFetch = () => {
+      checkAuth()
+      fetchDashboardData()
+    }
+    
+    checkAuthAndFetch()
+    
+    // Refresh data every 30 seconds
+    const interval = setInterval(fetchDashboardData, 30000)
+    return () => clearInterval(interval)
+  }, [checkAuth, fetchDashboardData])
+
+  
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken')
@@ -102,6 +108,7 @@ export const AdminDashboardModule = () => {
         alert('Failed to check out visitor')
       }
     } catch (error) {
+      console.error('Error checking out visitor:', error)
       alert('Error checking out visitor')
     }
   }
@@ -122,6 +129,7 @@ export const AdminDashboardModule = () => {
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
     } catch (error) {
+      console.error('Error exporting data:', error)
       alert('Error exporting data')
     }
   }
@@ -130,6 +138,7 @@ export const AdminDashboardModule = () => {
     try {
       return new Date(timestamp).toLocaleTimeString()
     } catch (error) {
+      console.error('Error formatting time:', error)
       return 'Invalid time'
     }
   }
@@ -184,7 +193,7 @@ export const AdminDashboardModule = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Today's Visitors</CardTitle>
+              <CardTitle className="text-sm font-medium">Today&apos;s Visitors</CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -238,7 +247,7 @@ export const AdminDashboardModule = () => {
         {/* Today's Visitors Table */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-xl">Today's Visitors</CardTitle>
+            <CardTitle className="text-xl">Today&apos;s Visitors</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">

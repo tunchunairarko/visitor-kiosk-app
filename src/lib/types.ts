@@ -54,7 +54,7 @@ export interface VisitorStats {
 }
 
 export interface DatabaseResult {
-  [key: string]: any;
+  [key: string]: string | number | boolean | null | undefined;
 }
 
 export interface CheckInResponse {

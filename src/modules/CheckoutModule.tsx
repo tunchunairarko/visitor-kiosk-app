@@ -41,6 +41,7 @@ export const CheckoutModule = () => {
         setVisitor(null)
       }
     } catch (error) {
+      console.error('Search error:', error)
       setError('Error searching for visitor. Please try again.')
       setVisitor(null)
     } finally {
@@ -69,6 +70,7 @@ export const CheckoutModule = () => {
         setError(data.error || 'Error checking out visitor')
       }
     } catch (error) {
+      console.error('Check out error:', error)
       setError('Error checking out visitor. Please try again.')
     } finally {
       setIsCheckingOut(false)
@@ -79,6 +81,7 @@ export const CheckoutModule = () => {
     try {
       return new Date(timestamp).toLocaleString()
     } catch (error) {
+      console.error('Time formatting error:', error)
       return 'Invalid date'
     }
   }
