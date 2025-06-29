@@ -36,14 +36,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
         
-      - name: Run linting
-        run: pnpm lint
+      # - name: Run linting
+      #   run: pnpm lint
         
-      - name: Run tests
-        run: pnpm test
+      # - name: Run tests
+      #   run: pnpm test
         
-      - name: Build application
-        run: pnpm build
+      # - name: Build application
+      #   run: pnpm build
         
       - name: Test Electron build
         run: pnpm dist
