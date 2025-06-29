@@ -213,7 +213,7 @@ export const CheckinModule = () => {
                   name="visitorPhone"
                   value={formData.visitorPhone}
                   onChange={handleInputChange}
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="(0) 123 123 4567"
                   className="text-base sm:text-lg py-2 sm:py-3 w-full"
                 />
               </div>
