@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { ArrowLeft, LogOut, Search } from 'lucide-react'
 import Link from 'next/link'
-import { Visitor } from '@/lib/types'
+import { Visitor } from '../lib/types'
 
 export const CheckoutModule = () => {
   const [ticketNumber, setTicketNumber] = useState('')

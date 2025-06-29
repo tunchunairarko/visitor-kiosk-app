@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
+import { Select } from '../components/ui/select'
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { ArrowLeft, User, Mail, Phone, Building2, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
-import { Employee } from '@/lib/employees'
+import { Employee } from '../lib/employees'
 
 export const CheckinModule = () => {
   const [formData, setFormData] = useState({

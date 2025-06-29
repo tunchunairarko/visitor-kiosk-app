@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '../components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { 
   Users, 
   UserCheck, 
@@ -15,7 +15,7 @@ import {
   Clock
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { Visitor } from '@/lib/types'
+import { Visitor } from '../lib/types'
 
 interface DashboardStats {
   todayVisitors: number
