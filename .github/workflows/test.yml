@@ -3,10 +3,10 @@ name: Test
 on:
   pull_request:
     branches:
-      - 'asdfasdf'
+      - '*'
   push:
     branches:
-      - 'asdfasdf'
+      - '*'
 
 jobs:
   test:
@@ -29,14 +29,13 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
       
       - name: Install dependencies
         run: pnpm install
 
       - name: Run linting
-        working-directory: src
-        run: pnpm run lint
+        run: pnpm lint
         
       # - name: Run tests
       #   run: pnpm test

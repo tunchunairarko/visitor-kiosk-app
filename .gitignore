@@ -141,7 +141,6 @@ build/
 /dist_electron/
 
 # Local electron builds
-app/
 unpackaged/
 
 # Database files (SQLite)
